@@ -109,179 +109,6 @@ double math_ozh_group(double** Tb, int intervals)
     return math_ozh_group;
 }
 
-class cube
-{
-private:
-    int sides;
-    double* probability, * ort;
-public:
-    cube()
-    {
-        sides = 6;
-        probability = new double[sides];
-        ort = new double[sides];
-        double sum = 0;
-        for (int i = 0; i < sides - 1; i++)
-        {
-            probability[i] = 1.0 / sides;
-            sum += probability[i];
-            ort[i] = sum;
-        }
-        probability[sides - 1] = 1 - sum;
-        ort[sides - 1] = 1;
-    }
-    cube(int cube_sides)
-    {
-        if (cube_sides > 1)
-        {
-            sides = cube_sides;
-        }
-        else
-        {
-            sides = 6;
-        }
-        probability = new double[sides];
-        ort = new double[sides];
-        double sum = 0;
-        for (int i = 0; i < sides - 1; i++)
-        {
-            probability[i] = 1.0 / sides;
-            sum += probability[i];
-            ort[i] = sum;
-        }
-        probability[sides - 1] = 1 - sum;
-        ort[sides - 1] = 1;
-    }
-    cube(int cube_sides, int dominant_side, double probability_side)
-    {
-        double sum = 0;
-        if (cube_sides > 1 && dominant_side > 0 && dominant_side <= cube_sides && probability_side > 0 && probability_side < 1)
-        {
-            sides = cube_sides;
-            probability = new double[sides];
-            ort = new double[sides];
-            double p = (1 - probability_side) / (sides - 1);
-            for (int i = 0; i < sides - 1; i++)
-            {
-                if ((i + 1) == dominant_side)
-                {
-                    probability[i] = probability_side;
-                }
-                else
-                {
-                    probability[i] = p;
-                }
-                sum += probability[i];
-                ort[i] = sum;
-            }
-        }
-        else
-        {
-            sides = 6;
-            probability = new double[sides];
-            ort = new double[sides];
-            for (int i = 0; i < sides - 1; i++)
-            {
-                probability[i] = 1.0 / sides;
-                sum += probability[i];
-                ort[i] = sum;
-            }
-        }
-        probability[sides - 1] = 1 - sum;
-        ort[sides - 1] = 1;
-
-    }
-    cube(int cube_sides, double x_start, double x_end)
-    {
-        if (cube_sides > 1 && x_start < x_end)
-        {
-            sides = cube_sides;
-            probability = new double[sides];
-            ort = new double[sides];
-            double sum = 0.0;
-            double delta = (x_end - x_start) / sides;
-            double x = x_start;
-            double coefficient = 0.0;
-            for (int i = 0; i < sides; i++, x += delta)
-            {
-                probability[i] = integral(x, x + delta, MX, SKO);
-                sum += probability[i];
-            }
-            coefficient = 1 / sum;
-            sum = 0.0;
-            for (int i = 0; i < sides - 1; i++)
-            {
-                probability[i] *= coefficient;
-                sum += probability[i];
-                ort[i] = sum;
-            }
-        }
-        else
-        {
-            sides = 6;
-            probability = new double[sides];
-            ort = new double[sides];
-            double sum = 0;
-            for (int i = 0; i < sides - 1; i++)
-            {
-                probability[i] = 1.0 / sides;
-                sum += probability[i];
-                ort[i] = sum;
-            }
-            probability[sides - 1] = 1 - sum;
-            ort[sides - 1] = 1;
-        }
-    }
-    cube(cube& object)
-    {
-        sides = object.sides;
-        probability = new double[sides];
-        ort = new double[sides];
-        for (int i = 0; i < sides; i++)
-        {
-            probability[i] = object.probability[i];
-            ort[i] = object.ort[i];
-        }
-    }
-    ~cube()
-    {
-        delete[]probability;
-        delete[]ort;
-    }
-    int get_sides()
-    {
-        return sides;
-    }
-    double get_probability_side(int side_number)
-    {
-        if (side_number > 0 && side_number <= sides)
-        {
-            return (probability[side_number - 1]);
-        }
-        return 0;
-    }
-    void output()
-    {
-        cout << "Количество сторон: " << sides << endl;
-        for (int i = 0; i < sides; i++)
-        {
-            cout << i + 1 << "     " << probability[i] << endl;
-        }
-    }
-    int roll()
-    {
-        double x = (double)rand() / RAND_MAX;
-        for (int i = 0; i < sides; i++)
-        {
-            if (x <= ort[i])
-            {
-                return (i + 1);
-            }
-        }
-        return 1;
-    }
-};
-
 int main()
 {
     SetConsoleCP(1251);
@@ -289,30 +116,47 @@ int main()
     srand(time(NULL));
     int i = 0;
     int j = 0;
-    int N = 150;
-    int number = 0;
-    double* array = new double[N];
-    double x_start = -3.0;
-    double x_end = 3.0;
-    double left_line = 0.0;
-    cube a(20, x_start, x_end);
-    a.output();
-    double delta = (x_end - x_start) / a.get_sides();
-    FILE* output = fopen("output.txt", "w");
-    if (output == nullptr)
-    {
-        cout << "[Ошибка]: не удалось открыть файл для записи" << endl;
+    int N = 0;
+    double number = 0;
+    double* array = new double[200];
+    //double x_start = -3.0;
+    //double x_end = 3.0;
+    //double left_line = 0.0;
+    //cube a(20, x_start, x_end);
+    //a.output();
+    //double delta = (x_end - x_start) / a.get_sides();
+    //FILE* output = fopen("output.txt", "w");
+    //if (output == nullptr)
+    //{
+    //    cout << "[Ошибка]: не удалось открыть файл для записи" << endl;
+    //    return 1;
+    //}
+    //for (i = 0; i < N; i++)
+    //{
+    //    number = a.roll();
+    //    left_line = x_start + (number - 1) * delta;
+    //    array[i] = delta * (double)rand() / (double)RAND_MAX + left_line;
+    //    cout << array[i] << "  ";
+    //    fprintf(output, "%f ", array[i]);
+    //}
+    //fclose(output);
+
+    FILE* input = fopen("output.txt", "r+");
+	if (input == nullptr)
+	{
+        cout << "[Ошибка]: не удалось открыть файл для чтения" << endl;
         return 1;
-    }
-    for (i = 0; i < N; i++)
+	}
+    i = 0;
+    while(fscanf(input, "%lf", &number) == 1)
     {
-        number = a.roll();
-        left_line = x_start + (number - 1) * delta;
-        array[i] = delta * (double)rand() / (double)RAND_MAX + left_line;
-        cout << array[i] << "  ";
-        fprintf(output, "%f ", array[i]);
+    	    cout << number << "  ";
+            array[i] = number;
+            i++;
+            N++;
     }
-    fclose(output);
+    fclose(input);
+
     double x_min = minimum(array, N);
     double x_max = maximum(array, N);
     double R = x_max - x_min;
@@ -382,7 +226,7 @@ int main()
     cout << "Асимметрия групп.: " << asim_group << endl;
     cout << "Эксцесс групп.: " << ek_group << endl;
     double hi2 = 0.0;
-    double pl = integral(x_min - 2 * h, x_min, MX, SKO) / 2;
+    F = integral(x_min - 2 * h, x_min, MX, SKO) / 2;
     double lamda = 0.0;
     double max_rF = 0.0;
     for (i = 0; i < intervals; i++)
